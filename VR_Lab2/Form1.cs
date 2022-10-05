@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -38,6 +40,7 @@ namespace VR_Lab2
             string[,] input;
             int len;
 
+
             try
             {
                 var n = System.IO.File.ReadLines(path).First().Split(new char[] { ' ' }).Length;
@@ -52,9 +55,11 @@ namespace VR_Lab2
 
             input_textBox.Text = "";
 
+
             using (FileStream f = File.OpenRead(path))
+            using (StreamReader reader = new StreamReader(f))
             {
-                StreamReader reader = new StreamReader(f);
+
                 string str = reader.ReadLine();
                 int j = 0;
                 while (str != null)
@@ -69,12 +74,20 @@ namespace VR_Lab2
                     j++;
                     str = reader.ReadLine();
                 }
-                reader.Dispose();
             }
 
             var z = ZigzagScan(input, len);
             single_textBox.Text = String.Join(" ", z);
             RLE_textBox.Text = RLE(z);
+
+            string textToWrite = "";
+            textToWrite += "Исходный массив: " + Environment.NewLine + input_textBox.Text + Environment.NewLine;
+            textToWrite += "Одномерный массив: " + single_textBox.Text + Environment.NewLine;
+            textToWrite += "RLE : " + RLE_textBox.Text;
+
+            File.WriteAllText("output.txt", textToWrite);
+            Process.Start("output.txt");
+            result_label.Text += "Результат сохранен в output.txt";
         }
 
         private string[] ZigzagScan(string[,] input, int n)
@@ -164,5 +177,7 @@ namespace VR_Lab2
                 ProcessFile(openFileDialog.FileName);
             }
         }
+
+
     }
 }
